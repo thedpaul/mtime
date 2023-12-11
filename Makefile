@@ -4,6 +4,7 @@ INSTALL = install
 
 bindir = /bin
 libdir = /lib
+includedir = /include
 
 CC = gcc
 CFLAGS = -std=c11 -pedantic -Wall -Werror -D_XOPEN_SOURCE=700
@@ -47,10 +48,12 @@ lib%.a: %.o
 
 install:
 	$(INSTALL) -D -m 755 -s mtime $(DESTDIR)$(bindir)/mtime
+	$(INSTALL) -D -m 644 mtime.h $(DESTDIR)$(includedir)/mtime.h
 	$(INSTALL) -D -m 644 -s libmtime.a $(DESTDIR)$(libdir)/libmtime.a
 
 uninstall:
 	$(RM) $(DESTDIR)$(bindir)/mtime
+	$(RM) $(DESTDIR)$(includedir)/mtime.h
 	$(RM) $(DESTDIR)$(libdir)/libmtime.a
 
 clean:
