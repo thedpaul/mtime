@@ -1,18 +1,20 @@
+SHELL = /bin/sh
+
+INSTALL = install
+
+bindir = /bin
+libdir = /lib
+
 CC = gcc
 CFLAGS = -std=c11 -pedantic -Wall -Werror -D_XOPEN_SOURCE=700
 
-STRIP = 0
-
-.PHONY: all debug release clean refresh_mtime
+.PHONY: all debug clean refresh_mtime
 .SILENT: clean
 
 all: mtime refresh_mtime libmtime.a
 
 debug: CFLAGS += -g
 debug: all
-
-release: STRIP = 1
-release: all
 
 mtime.o: mtime.c mtime.h
 
@@ -30,17 +32,11 @@ refresh_mtime: mtime.o
 	@if ! grep -q '$$(RM) $@$$' Makefile; then \
 		printf '\t$$(RM) $@\n' >> Makefile; \
 	fi
-	@if [ $(STRIP) = 1 ]; then \
-		strip $@; \
-	fi
 
 lib%.a: %.o
 	$(AR) -rcs $@ $^
 	@if ! grep -Fq '$$(RM) $@' Makefile; then \
 		printf '\t$$(RM) $@\n' >> Makefile; \
-	fi
-	@if [ $(STRIP) = 1 ]; then \
-		strip $@; \
 	fi
 
 %.o: %.c
@@ -48,6 +44,14 @@ lib%.a: %.o
 	@if ! grep -Fq '$$(RM) $@' Makefile; then \
 		printf '\t$$(RM) $@\n' >> Makefile; \
 	fi
+
+install:
+	$(INSTALL) -D -m 755 -s mtime $(DESTDIR)$(bindir)/mtime
+	$(INSTALL) -D -m 644 -s libmtime.a $(DESTDIR)$(libdir)/libmtime.a
+
+uninstall:
+	$(RM) $(DESTDIR)$(bindir)/mtime
+	$(RM) $(DESTDIR)$(libdir)/libmtime.a
 
 clean:
 	sed -i '/^\t#CLEAN_START/,$${//!d}' Makefile
