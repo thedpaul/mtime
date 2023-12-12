@@ -43,7 +43,7 @@ int mtime_init(char *envp[]) {
   return 0;
 }
 
-int profile_cmd(char **cmd, long *runtime, struct rusage *r_usage) {
+int profile_cmd(char *cmd[], long *runtime, struct rusage *r_usage) {
   struct sigaction oact;
   if (sigaction(SIGINT, &(struct sigaction){ .sa_handler = SIG_IGN }, &oact))
     return -1;
@@ -95,7 +95,6 @@ int main(int argc, char *argv[], char *envp[]) {
 
   if (putchar('\n') == EOF)
     die("putchar failed");
-
 
   while (*(++argv)) {
     if (printf("%s ", *argv) < 0)
