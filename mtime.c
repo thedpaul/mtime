@@ -38,9 +38,8 @@ static inline long get_time_monotonic_ns(void) {
   return t.tv_nsec + t.tv_sec * 1e9;
 }
 
-int mtime_init(char *envp[]) {
+void mtime_init(char *envp[]) {
   environ = envp;
-  return 0;
 }
 
 int profile_cmd(char *cmd[], long *runtime, struct rusage *r_usage) {
@@ -80,8 +79,7 @@ int main(int argc, char *argv[], char *envp[]) {
   if (argc < 2)
     fatal("Usage: %s command [args ...]\n", *argv);
 
-  if (mtime_init(envp))
-    die("mtime_init failed");
+  mtime_init(envp);
 
   struct rusage r_usage;
   long runtime;
